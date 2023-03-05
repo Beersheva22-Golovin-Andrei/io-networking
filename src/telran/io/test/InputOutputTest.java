@@ -93,37 +93,13 @@ public class InputOutputTest {
 		
 		
 		private void checkDir (Path path, int maxLevel, int level) {
-		if (level<maxLevel) {
+			if (level<maxLevel) {
 				File file = new File (path.subpath(0, level+1).toString());
 				Arrays.stream(file.listFiles()).filter(f -> {
 					System.out.println("	".repeat(level+1)+f.getName());
 					return f.isDirectory();
 					})
 				.forEach(f -> checkDir(f.toPath(), maxLevel, level+1));  
-		}
-		}
-		
-		@Test
-		void test() {
-			
-			String path = "main_dir/folder1/folder2/folder3/folder4";
-			Path direct = Path.of(path);
-			
-		
-			System.out.println(direct.getRoot());
-			System.out.println(direct.subpath(0, 1));
-		
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-
+		}		
 }
