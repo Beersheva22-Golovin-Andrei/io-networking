@@ -1,7 +1,6 @@
 package telran.io;
 
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 
 public abstract class Copy {
 
@@ -9,7 +8,7 @@ public abstract class Copy {
 	
 	protected String destFilePAth;
 	
-	protected boolean overwrite;
+	protected boolean overwrite = false;
 	
 	protected long proccesTime;
 
@@ -24,13 +23,12 @@ public abstract class Copy {
 	public abstract DisplayResult getDisplayResult (long copyTime, long fileSize);
 
 	public void copyRun() {
-		try {
+		try {	
 			long fileSize = copy();
 			getDisplayResult(proccesTime, fileSize).toString();
-		} catch (FileAlreadyExistsException e1) {
-			System.out.println("File already exists and cannot be overwritten!");
 		} catch (IOException e2) {
 			System.out.println("File cannot be copied!");
+			e2.printStackTrace();
 		}
 	}
 }
