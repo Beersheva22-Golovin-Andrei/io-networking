@@ -89,7 +89,7 @@ public class CompanyImpl implements Company {
 
 	@Override
 	public List<Employee> getEmployeesByMonthBirth(int month) {
-		return emplMonth.get(month);
+		return new ArrayList<>(emplMonth.get(month));
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class CompanyImpl implements Company {
 
 	@Override
 	public List<Employee> getEmployeesByDepartment(String department) {
-		return emplDepart.get(department);
+		return new ArrayList<>(emplDepart.get(department));
 	}
 
 	@Override
@@ -112,34 +112,22 @@ public class CompanyImpl implements Company {
 
 	@Override
 	public void save(String pathName) {
-		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(pathName))){
-			out.writeObject(emplId);
-			out.writeObject(emplSel);
-			out.writeObject(emplDepart);
-			out.writeObject(emplMonth);
-	
-		} catch (FileNotFoundException e) {
-			LOGGER.warning(e.getMessage());
-		} catch (IOException e) {
-			LOGGER.warning(e.getMessage());
-		}
-
+		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(pathName))){
+			output.writeObject(getAllEmployees());
+		} catch(Exception e) {
+			throw new RuntimeException(e.toString());
+	}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void restore(String pathName) {
-		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(pathName))){
-			emplId = (Map<Long, Employee>) input.readObject();
-			emplSel = (Map<Integer, List<Employee>>) input.readObject();
-			emplDepart = (Map<String, List<Employee>>) input.readObject();
-			emplMonth =(Map<Integer, List<Employee>>) input.readObject();
-		} catch (FileNotFoundException e) {
-			LOGGER.warning(e.getMessage());
-		} catch (IOException e) {
-			LOGGER.warning(e.getMessage());
-		} catch (ClassNotFoundException e) {
-			LOGGER.severe(e.getMessage());
+		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(pathName))) {
+			List<Employee> allEmployees = (List<Employee>) input.readObject();
+			allEmployees.forEach(this::addEmployee);
+		}catch(FileNotFoundException e) {
+		} catch (Exception e) {
+			throw new RuntimeException(e.toString());
 		}
 
 	}
